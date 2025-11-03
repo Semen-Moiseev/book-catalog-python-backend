@@ -6,7 +6,6 @@ from app.core.database import async_session
 from app.models.author import Author
 
 class AuthorService:
-
 	@staticmethod
 	async def get_all_authors():
 		return await AuthorRepository.get_all()

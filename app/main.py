@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.api.author_router import router as author_router
+from app.api.genre_router import router as genre_router
 from contextlib import asynccontextmanager
 from app.core.database import init_db
 
@@ -11,3 +12,4 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(author_router, prefix="/api")
+app.include_router(genre_router, prefix="/api")
