@@ -9,7 +9,7 @@ class Book(Base):
 
 	id = Column(Integer, primary_key=True, index=True)
 	title = Column(String, nullable=False)
-	type = Column(Enum(BookType), nullable=False)
+	type = Column(Enum(BookType, values_callable=lambda x: [e.value for e in x]), nullable=False)
 
 	author_id = Column(Integer, ForeignKey("authors.id", ondelete="CASCADE"), nullable=False)
 	author = relationship("Author", back_populates="books")

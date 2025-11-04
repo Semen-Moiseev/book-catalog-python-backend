@@ -1,6 +1,6 @@
-import enum
+from enum import Enum
 
-class BookType(enum.Enum):
+class BookType(str, Enum):
 	GRAPHIC = "graphic"
 	DIGITAL = "digital"
-	PRINTED = "printed"
+	PRINTED = "print"
