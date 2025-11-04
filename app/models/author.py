@@ -1,8 +1,13 @@
-from sqlmodel import SQLModel, Field
+from app.core.database import Base
+from sqlalchemy import Column, Integer, String, Enum, ForeignKey
 from typing import Optional
+from sqlalchemy.orm import relationship
 
-class Author(SQLModel, table=True):
+class Author(Base):
 	__tablename__ = "authors"
-	id: Optional[int] = Field(default=None, primary_key=True)
-	name: str
-	user_id: int
+
+	id = Column(Integer, primary_key=True, index=True)
+	name = Column(String, nullable=False)
+	user_id = Column(Integer, nullable=False)
+
+	books = relationship("Book", back_populates="author", cascade="all, delete")

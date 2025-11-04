@@ -1,7 +1,12 @@
-from sqlmodel import SQLModel, Field
-from typing import Optional
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
+from app.models import book_genre
+from app.core.database import Base
 
-class Genre(SQLModel, table=True):
+class Genre(Base):
 	__tablename__ = "genres"
-	id: Optional[int] = Field(default=None, primary_key=True)
-	name: str
+
+	id = Column(Integer, primary_key=True, index=True)
+	name = Column(String, nullable=False)
+
+	books = relationship("Book", secondary=book_genre, back_populates="genres")
