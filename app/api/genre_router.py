@@ -24,7 +24,12 @@ async def get_genre(genre_id: int):
 
 @router.post("/", response_model=List[GenreResponse], status_code=status.HTTP_200_OK)
 async def create_genre(genre_create: GenreCreate):
-	return await GenreService.create_genre(genre_create)
+	created_genre = await GenreService.create_genre(genre_create)
+	if not created_genre:
+		raise HTTPException(status_code=404, detail="Genre not found")
+
+	genre_data = GenreResponse.model_validate(created_genre).model_dump()
+	return success_response(genre_data, "The data has been successfully created")
 
 @router.put("/{genre_id}", response_model=List[GenreResponse], status_code=status.HTTP_200_OK)
 async def update_genre(genre_id: int, genre_update: GenreUpdate):
@@ -32,7 +37,7 @@ async def update_genre(genre_id: int, genre_update: GenreUpdate):
 	if not updated_genre:
 		raise HTTPException(status_code=404, detail="Genre not found")
 
-	genre_data = GenreResponse.model_validate(update_genre).model_dump()
+	genre_data = GenreResponse.model_validate(updated_genre).model_dump()
 	return success_response(genre_data, "The data has been successfully updated")
 
 @router.delete("/{genre_id}")

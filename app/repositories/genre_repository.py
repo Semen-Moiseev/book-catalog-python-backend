@@ -50,3 +50,9 @@ class GenreRepository:
 			await session.delete(genre)
 			await session.commit()
 			return True
+
+	@staticmethod
+	async def get_by_name(name: str):
+		async with async_session() as session:
+			result = await session.execute(select(Genre).where(Genre.name == name))
+			return result.scalar_one_or_none()
