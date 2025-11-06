@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, status, HTTPException, Query
 from app.services.book_service import BookService
 from app.core.response_builder import success_response
 from typing import List
@@ -8,10 +8,11 @@ from app.schemas.book import BookCreate, BookUpdate
 router = APIRouter(prefix="/books", tags=["Books"])
 
 @router.get("/", response_model=List[BookResponse], status_code=status.HTTP_200_OK)
-async def list_books():
-	books = await BookService.get_all_books()
-	books_data = [BookResponse.model_validate(book).model_dump() for book in books]
-	return success_response(books_data, "Books fetched successfully")
+async def list_books(
+	page: int = Query(1, ge=1),
+	per_page: int = Query(5, ge=1, le=100)):
+	books = await BookService.get_all_books(page, per_page)
+	return success_response(books, "Books fetched successfully")
 
 @router.get("/{book_id}", response_model=List[BookResponse], status_code=status.HTTP_200_OK)
 async def get_book(book_id: int):

@@ -7,8 +7,8 @@ from app.models.author import Author
 
 class AuthorService:
 	@staticmethod
-	async def get_all_authors():
-		return await AuthorRepository.get_all()
+	async def get_all_authors(page, per_page):
+		return await AuthorRepository.get_all(page, per_page)
 
 	@staticmethod
 	async def get_by_id_author(author_id: int):
@@ -18,7 +18,7 @@ class AuthorService:
 	@staticmethod
 	async def update_author(author_id: int, update_data: AuthorUpdate):
 		# Проверяем уникальность имени
-		await check_unique_author_name(author_id, update_data.name)
+		await check_unique_author_name_for_update(author_id, update_data.name)
 
 		author = await AuthorRepository.update(author_id, update_data)
 		return author
@@ -27,7 +27,7 @@ class AuthorService:
 	async def delete_author(author_id: int):
 		return await AuthorRepository.delete(author_id)
 
-async def check_unique_author_name(author_id: int, name: str):
+async def check_unique_author_name_for_update(author_id: int, name: str):
 	async with async_session() as session:
 		result = await session.execute(
 			select(Author).where(Author.name == name, Author.id != author_id)

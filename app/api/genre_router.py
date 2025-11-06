@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, status, HTTPException, Query
 from typing import List
 from app.schemas.genre import GenreResponse
 from app.services.genre_service import GenreService
@@ -8,10 +8,11 @@ from app.schemas.genre import GenreCreate, GenreUpdate
 router = APIRouter(prefix="/genres", tags=["Genres"])
 
 @router.get("/", response_model=List[GenreResponse], status_code=status.HTTP_200_OK)
-async def list_genres():
-	genres = await GenreService.get_all_genres()
-	genres_data = [GenreResponse.model_validate(genre).model_dump() for genre in genres]
-	return success_response(genres_data, "Genres fetched successfully")
+async def list_genres(
+	page: int = Query(1, ge=1),
+	per_page: int = Query(5, ge=1, le=100)):
+	genres = await GenreService.get_all_genres(page, per_page)
+	return success_response(genres, "Genres fetched successfully")
 
 @router.get("/{genre_id}", response_model=List[GenreResponse], status_code=status.HTTP_200_OK)
 async def get_genre(genre_id: int):

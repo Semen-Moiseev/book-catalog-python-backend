@@ -1,15 +1,30 @@
 from app.core.database import async_session
-from sqlalchemy.future import select
+from sqlalchemy import select, func
 from app.models.genre import Genre
 from app.schemas.genre import GenreUpdate, GenreCreate
+from app.schemas.genre import GenreResponse
 
 class GenreRepository:
 	@staticmethod
-	async def get_all():
+	async def get_all(page, per_page):
 		async with async_session() as session:
-			result = await session.execute(select(Genre))
+			total_result = await session.execute(select(func.count()).select_from(Genre))
+			total = total_result.scalar() or 0
+
+			result = await session.execute(
+				select(Genre)
+				.offset((page - 1) * per_page)
+				.limit(per_page)
+			)
 			genres = result.scalars().all()
-			return genres
+
+			return {
+				"page": page,
+				"per_page": per_page,
+				"total": total,
+				"total_pages": (total + per_page - 1) // per_page,
+				"items": [GenreResponse.model_validate(genre).model_dump() for genre in genres],
+			}
 
 	@staticmethod
 	async def find_by_id(genre_id: int):

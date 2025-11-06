@@ -3,8 +3,8 @@ from app.schemas.book import BookCreate, BookUpdate
 
 class BookService:
 	@staticmethod
-	async def get_all_books():
-		return await BookRepository.get_all()
+	async def get_all_books(page, per_page):
+		return await BookRepository.get_all(page, per_page)
 
 	@staticmethod
 	async def get_by_id_book(book_id: int):

@@ -7,8 +7,8 @@ from fastapi import HTTPException
 
 class GenreService:
 	@staticmethod
-	async def get_all_genres():
-		return await GenreRepository.get_all()
+	async def get_all_genres(page, per_page):
+		return await GenreRepository.get_all(page, per_page)
 
 	@staticmethod
 	async def get_by_id_genre(genre_id: int):

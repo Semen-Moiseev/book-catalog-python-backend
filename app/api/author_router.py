@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, status, HTTPException, Query
 from app.services.author_service import AuthorService
 from app.core.response_builder import success_response
 from typing import List
@@ -8,10 +8,11 @@ from app.schemas.author import AuthorUpdate
 router = APIRouter(prefix="/authors", tags=["Authors"])
 
 @router.get("/", response_model=List[AuthorResponse], status_code=status.HTTP_200_OK)
-async def list_authors():
-	authors = await AuthorService.get_all_authors()
-	authors_data = [AuthorResponse.model_validate(a).model_dump() for a in authors]
-	return success_response(authors_data, "Authors fetched successfully")
+async def list_authors(
+	page: int = Query(1, ge=1),
+	per_page: int = Query(5, ge=1, le=100)): #description="Количество элементов на странице"
+	authors = await AuthorService.get_all_authors(page, per_page)
+	return success_response(authors, "Authors fetched successfully")
 
 @router.get("/{author_id}", response_model=AuthorResponse, status_code=status.HTTP_200_OK)
 async def get_author(author_id: int):
