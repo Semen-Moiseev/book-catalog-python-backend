@@ -29,8 +29,8 @@ class GenreRepository:
 	@staticmethod
 	async def find_by_id(genre_id: int):
 		async with async_session() as session:
-			result = await session.get(Genre, genre_id)
-			return result
+			genre = await session.get(Genre, genre_id)
+			return genre
 
 	@staticmethod
 	async def create(genre_data: GenreCreate):
@@ -42,13 +42,9 @@ class GenreRepository:
 			return genre
 
 	@staticmethod
-	async def update(genre_id: int, update_data: GenreUpdate):
+	async def update(genre: Genre, update_data: GenreUpdate):
 		async with async_session() as session:
-			genre = await session.get(Genre, genre_id)
-			if not genre:
-				return None
-
-			for key, value in update_data.dict(exclude_unset=True).items():
+			for key, value in update_data.model_dump(exclude_unset=True).items():
 				setattr(genre, key, value)
 			session.add(genre)
 			await session.commit()
@@ -56,18 +52,20 @@ class GenreRepository:
 			return genre
 
 	@staticmethod
-	async def delete(genre_id: int):
+	async def delete(genre: Genre):
 		async with async_session() as session:
-			genre = await session.get(Genre, genre_id)
-			if not genre:
-				return False
-
 			await session.delete(genre)
 			await session.commit()
-			return True
 
 	@staticmethod
-	async def get_by_name(name: str):
+	async def check_unique_genre_name_for_create(name: str):
 		async with async_session() as session:
 			result = await session.execute(select(Genre).where(Genre.name == name))
-			return result.scalar_one_or_none()
+			return result.scalar_one_or_none() is None
+
+	@staticmethod
+	async def check_unique_genre_name_for_update(genre_id: int, name: str):
+		async with async_session() as session:
+			query = select(Genre).where(Genre.name == name, Genre.id != genre_id)
+			result = await session.execute(query)
+			return result.scalar_one_or_none() is None

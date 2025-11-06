@@ -13,9 +13,9 @@ def success_response(data=None, message="", status_code=200):
 def error_response(status_code=400, message=""):
 	return JSONResponse(
 		content={
-			"success": True,
+			"success": False,
 			"code": status_code,
 			"message": message,
-			"data": None},
+			"data": {}},
 		status_code=status_code
 	)

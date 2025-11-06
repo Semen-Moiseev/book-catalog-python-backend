@@ -29,8 +29,8 @@ class BookRepository:
 	@staticmethod
 	async def find_by_id(book_id: int):
 		async with async_session() as session:
-			result = await session.get(Book, book_id)
-			return result
+			book = await session.get(Book, book_id)
+			return book
 
 	@staticmethod
 	async def create(book_data: BookCreate):
@@ -42,13 +42,9 @@ class BookRepository:
 			return book
 
 	@staticmethod
-	async def update(book_id: int, update_data: BookUpdate):
+	async def update(book: Book, update_data: BookUpdate):
 		async with async_session() as session:
-			book = await session.get(Book, book_id)
-			if not book:
-				return None
-
-			for key, value in update_data.dict(exclude_unset=True).items():
+			for key, value in update_data.model_dump(exclude_unset=True).items():
 				setattr(book, key, value)
 			session.add(book)
 			await session.commit()
@@ -56,12 +52,7 @@ class BookRepository:
 			return book
 
 	@staticmethod
-	async def delete(book_id: int):
+	async def delete(book: Book):
 		async with async_session() as session:
-			book = await session.get(Book, book_id)
-			if not book:
-				return False
-
 			await session.delete(book)
 			await session.commit()
-			return True

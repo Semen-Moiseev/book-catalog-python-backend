@@ -7,34 +7,30 @@ from app.models.author import Author
 
 class AuthorService:
 	@staticmethod
-	async def get_all_authors(page, per_page):
+	async def get_all_authors(page: int, per_page: int):
 		return await AuthorRepository.get_all(page, per_page)
 
 	@staticmethod
 	async def get_by_id_author(author_id: int):
 		author = await AuthorRepository.find_by_id(author_id)
+		if not author:
+			raise HTTPException(status_code=404, detail="Author not found")
 		return author
 
 	@staticmethod
 	async def update_author(author_id: int, update_data: AuthorUpdate):
-		# Проверяем уникальность имени
-		await check_unique_author_name_for_update(author_id, update_data.name)
+		author = await AuthorRepository.find_by_id(author_id)
+		if not author:
+			raise HTTPException(status_code=404, detail="Author not found")
 
-		author = await AuthorRepository.update(author_id, update_data)
-		return author
+		if not await AuthorRepository.check_unique_author_name_for_update(update_data.name, author_id):
+			raise HTTPException(status_code=400, detail=f"Author with name '{update_data.name}' already exists.")
+
+		return await AuthorRepository.update(author, update_data)
 
 	@staticmethod
 	async def delete_author(author_id: int):
-		return await AuthorRepository.delete(author_id)
-
-async def check_unique_author_name_for_update(author_id: int, name: str):
-	async with async_session() as session:
-		result = await session.execute(
-			select(Author).where(Author.name == name, Author.id != author_id)
-		)
-		existing_author = result.scalar_one_or_none()
-		if existing_author:
-			raise HTTPException(
-				status_code=400,
-				detail=f"Author with name '{name}' already exists."
-			)
+		author = await AuthorRepository.find_by_id(author_id)
+		if not author:
+			raise HTTPException(status_code=404, detail="Author not found")
+		await AuthorRepository.delete(author)

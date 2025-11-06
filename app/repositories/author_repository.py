@@ -27,19 +27,15 @@ class AuthorRepository:
 			}
 
 	@staticmethod
-	async def find_by_id(author_id: int):
-		async with async_session() as session:
-			result = await session.get(Author, author_id)
-			return result
-
-	@staticmethod
-	async def update(author_id: int, update_data: AuthorUpdate):
+	async def find_by_id(author_id: int) -> Author | None:
 		async with async_session() as session:
 			author = await session.get(Author, author_id)
-			if not author:
-				return None
+			return author
 
-			for key, value in update_data.dict(exclude_unset=True).items():
+	@staticmethod
+	async def update(author: Author, update_data: AuthorUpdate) -> Author:
+		async with async_session() as session:
+			for key, value in update_data.model_dump(exclude_unset=True).items():
 				setattr(author, key, value)
 			session.add(author)
 			await session.commit()
@@ -47,12 +43,14 @@ class AuthorRepository:
 			return author
 
 	@staticmethod
-	async def delete(author_id: int):
+	async def delete(author: Author):
 		async with async_session() as session:
-			author = await session.get(Author, author_id)
-			if not author:
-				return False
-
 			await session.delete(author)
 			await session.commit()
-			return True
+
+	@staticmethod
+	async def check_unique_author_name_for_update(name: str, author_id: int = None) -> bool:
+		async with async_session() as session:
+			query = select(Author).where(Author.name == name, Author.id != author_id)
+			result = await session.execute(query)
+			return result.scalar_one_or_none() is None
