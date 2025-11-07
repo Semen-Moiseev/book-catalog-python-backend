@@ -58,8 +58,8 @@ class SQLAlchemyRepository(AbstractRepository[TModel, TCreate, TUpdate, TRespons
 	async def find_by_id(self, item_id: int):
 		async with async_session() as session:
 			stmt = select(self.model).where(self.model.id == item_id)
-			res = session.execute(stmt)
-			return res
+			res = await session.execute(stmt)
+			return res.scalar_one_or_none() #
 
 	async def create(self, data: TCreate):
 		async with async_session() as session:
@@ -69,13 +69,14 @@ class SQLAlchemyRepository(AbstractRepository[TModel, TCreate, TUpdate, TRespons
 
 			stmt = select(self.model).where(self.model.id == res.lastrowid)
 			res = await session.execute(stmt)
-			return res.scalar_one()
+			return res.scalar_one() #
 
 	async def update(self, obj: TModel, update_data: TUpdate):
 		async with async_session() as session:
 			for key, value in update_data.model_dump(exclude_unset=True).items():
 				setattr(obj, key, value)
 			session.add(obj)
+			await session.commit()
 			await session.refresh(obj)
 
 			if self.response_schema:
