@@ -1,10 +1,7 @@
+from app.repositories.repository import AbstractRepository
 from app.repositories.genre_repository import GenreRepository
 from app.schemas.genre import GenreCreate, GenreUpdate
-from app.core.database import async_session
-from sqlalchemy import select
-from app.models.genre import Genre
 from fastapi import HTTPException
-from app.utils.repository import AbstractRepository
 
 class GenreService:
 	def __init__(self, genre_repo: AbstractRepository):
@@ -26,7 +23,7 @@ class GenreService:
 		if not await GenreRepository.check_unique_genre_name_for_create(genre_data.name):
 			raise HTTPException(status_code=400, detail=f"Genre with name '{genre_data.name}' already exists.")
 
-		genre = await self.genre_repo.create(genre_data.model_dump()) #
+		genre = await self.genre_repo.create(genre_data.model_dump())
 		return genre
 
 

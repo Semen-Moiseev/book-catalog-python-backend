@@ -1,9 +1,8 @@
 from fastapi import APIRouter, status, Query
-from typing import List
-from app.schemas.genre import GenreResponse
 from app.services.genre_service import GenreService
 from app.core.response_builder import success_response
-from app.schemas.genre import GenreCreate, GenreUpdate
+from typing import List
+from app.schemas.genre import GenreCreate, GenreUpdate, GenreResponse
 from app.repositories.genre_repository import GenreRepository
 
 router = APIRouter(prefix="/genres", tags=["Genres"])

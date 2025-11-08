@@ -1,7 +1,7 @@
+from app.core.database import Base
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from app.models import book_genre
-from app.core.database import Base
 
 class Genre(Base):
 	__tablename__ = "genres"

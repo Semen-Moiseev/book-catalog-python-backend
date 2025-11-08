@@ -1,7 +1,6 @@
+from app.repositories.repository import SQLAlchemyRepository
 from app.models.genre import Genre
-from app.utils.repository import SQLAlchemyRepository
 from app.schemas.genre import GenreCreate, GenreUpdate, GenreResponse
-
 from app.core.database import async_session
 from sqlalchemy import select
 
