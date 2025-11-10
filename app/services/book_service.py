@@ -4,7 +4,7 @@ from fastapi import HTTPException
 
 class BookService:
 	def __init__(self, book_repo: AbstractRepository):
-		self.book_repo: AbstractRepository = book_repo()
+		self.book_repo: AbstractRepository = book_repo
 
 
 	async def get_all_books(self, page, per_page):
