@@ -14,7 +14,7 @@ class AbstractRepository(ABC, Generic[TModel, TCreate, TUpdate, TResponse]):
 	response_schema: Optional[Type[TResponse]] = None
 
 	def __init__(self, session: AsyncSession):
-		self.session: AsyncSession = session
+		self.session = session
 
 	@abstractmethod
 	async def get_all(self, page: int, per_page: int):
