@@ -11,7 +11,7 @@ async_engine = create_async_engine(DATABASE_URL, echo=True)
 
 # Создаём асинхронную сессию
 async_session_maker = sessionmaker(
-	async_engine ,
+	bind=async_engine,
 	expire_on_commit=False,
 	class_=AsyncSession
 )
