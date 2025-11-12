@@ -1,12 +1,29 @@
 from app.services.service import BaseService
 from app.schemas.book import BookCreate, BookUpdate
 from fastapi import HTTPException
+from app.repositories.genre_repository import GenreRepository
+from app.repositories.book_repository import BookRepository
 
 class BookService(BaseService):
-	async def create(self, book_data: BookCreate):
+	def __init__(self, book_repo: BookRepository, genre_repo: GenreRepository | None = None):
+		super().__init__(book_repo)
+		self.genre_repo = genre_repo
+
+	async def create(self, data: BookCreate):
 		# Проверка уникальности ...
 
-		book = await self.repository.create(book_data.model_dump())
+		genres = []
+		if data.genres:
+			genres = await self.genre_repo.get_by_ids(data.genres)
+
+			if not genres:
+				raise HTTPException(status_code=400, detail="Invalid genre IDs")
+
+		book = await self.repository.create({
+			"title": data.title,
+			"type": data.type,
+			"author_id": data.author_id
+		}, genres=genres)
 		return book
 
 

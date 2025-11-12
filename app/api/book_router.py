@@ -6,6 +6,7 @@ from app.core.response_builder import success_response
 from typing import List
 from app.schemas.book import BookCreate, BookUpdate, BookResponse
 from app.repositories.book_repository import BookRepository
+from app.repositories.genre_repository import GenreRepository
 
 router = APIRouter(prefix="/books", tags=["Books"])
 
@@ -31,9 +32,16 @@ async def get_book(book_id: int, session: AsyncSession = Depends(get_session)):
 @router.post("/", response_model=List[BookResponse], status_code=status.HTTP_200_OK, description="Создание новой книги")
 async def create_book(book_create: BookCreate, session: AsyncSession = Depends(get_session)):
 	book_repo = BookRepository(session)
-	book_service = BookService(book_repo)
+	genre_repo = GenreRepository(session)
+	book_service = BookService(book_repo, genre_repo)
 	created_book = await book_service.create(book_create)
-	book_data = BookResponse.model_validate(created_book).model_dump()
+	book_data = BookResponse.model_validate({
+		"id": created_book.id,
+		"title": created_book.title,
+		"type": created_book.type,
+		"author_id": created_book.author_id,
+		"genres": [genre.id for genre in created_book.genres]
+	}).model_dump()
 	return success_response(book_data, "The data has been successfully created")
 
 @router.put("/{book_id}", response_model=List[BookResponse], status_code=status.HTTP_200_OK, description="Обновление книги по id")

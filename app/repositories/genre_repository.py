@@ -8,10 +8,16 @@ class GenreRepository(SQLAlchemyRepository[Genre, GenreCreate, GenreUpdate, Genr
 	response_schema = GenreResponse
 
 	async def check_unique_genre_name_for_create(self, name: str):
-		result = await self.session.execute(select(Genre).where(Genre.name == name))
+		stmt = select(Genre).where(Genre.name == name)
+		result = await self.session.execute(stmt)
 		return result.scalar_one_or_none() is None
 
 	async def check_unique_genre_name_for_update(self, genre_id: int, name: str):
-		query = select(Genre).where(Genre.name == name, Genre.id != genre_id)
-		result = await self.session.execute(query)
+		stmt = select(Genre).where(Genre.name == name, Genre.id != genre_id)
+		result = await self.session.execute(stmt)
 		return result.scalar_one_or_none() is None
+
+	async def get_by_ids(self, genres: list[int]):
+		stmt = select(self.model).where(self.model.id.in_(genres))
+		result = await self.session.execute(stmt)
+		return result.scalars().all()

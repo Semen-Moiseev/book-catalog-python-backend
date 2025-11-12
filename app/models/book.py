@@ -10,7 +10,7 @@ class Book(Base):
 	id = Column(Integer, primary_key=True, index=True)
 	title = Column(String(255), nullable=False)
 	type = Column(Enum(BookType, values_callable=lambda x: [e.value for e in x]), nullable=False)
-
 	author_id = Column(Integer, ForeignKey("authors.id", ondelete="CASCADE"), nullable=False, index=True)
+
 	author = relationship("Author", back_populates="books")
 	genres = relationship("Genre", secondary=book_genre, back_populates="books")
