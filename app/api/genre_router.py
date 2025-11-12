@@ -17,14 +17,14 @@ async def list_genres(
 ):
 	genre_repo = GenreRepository(session)
 	genre_service = GenreService(genre_repo)
-	genres = await genre_service.get_all_genres(page, per_page)
+	genres = await genre_service.get_all(page, per_page)
 	return success_response(genres, "Genres fetched successfully")
 
 @router.get("/{genre_id}", response_model=List[GenreResponse], status_code=status.HTTP_200_OK, description="Получение жанра по id")
 async def get_genre(genre_id: int, session: AsyncSession = Depends(get_session)):
 	genre_repo = GenreRepository(session)
 	genre_service = GenreService(genre_repo)
-	genre = await genre_service.get_by_id_genre(genre_id)
+	genre = await genre_service.get_by_id(genre_id)
 	genre_data = GenreResponse.model_validate(genre).model_dump()
 	return success_response(genre_data, "The data was successfully found")
 
@@ -32,7 +32,7 @@ async def get_genre(genre_id: int, session: AsyncSession = Depends(get_session))
 async def create_genre(genre_create: GenreCreate, session: AsyncSession = Depends(get_session)):
 	genre_repo = GenreRepository(session)
 	genre_service = GenreService(genre_repo)
-	created_genre = await genre_service.create_genre(genre_create)
+	created_genre = await genre_service.create(genre_create)
 	genre_data = GenreResponse.model_validate(created_genre).model_dump()
 	return success_response(genre_data, "The data has been successfully created")
 
@@ -40,7 +40,7 @@ async def create_genre(genre_create: GenreCreate, session: AsyncSession = Depend
 async def update_genre(genre_id: int, genre_update: GenreUpdate, session: AsyncSession = Depends(get_session)):
 	genre_repo = GenreRepository(session)
 	genre_service = GenreService(genre_repo)
-	updated_genre = await genre_service.update_genre(genre_id, genre_update)
+	updated_genre = await genre_service.update(genre_id, genre_update)
 	genre_data = GenreResponse.model_validate(updated_genre).model_dump()
 	return success_response(genre_data, "The data has been successfully updated")
 
@@ -48,5 +48,5 @@ async def update_genre(genre_id: int, genre_update: GenreUpdate, session: AsyncS
 async def delete_genre(genre_id: int, session: AsyncSession = Depends(get_session)):
 	genre_repo = GenreRepository(session)
 	genre_service = GenreService(genre_repo)
-	await genre_service.delete_genre(genre_id)
+	await genre_service.delete(genre_id)
 	return success_response({}, "The data has been successfully deleted")

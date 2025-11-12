@@ -17,14 +17,14 @@ async def list_books(
 ):
 	book_repo = BookRepository(session)
 	book_service = BookService(book_repo)
-	books = await book_service.get_all_books(page, per_page)
+	books = await book_service.get_all(page, per_page)
 	return success_response(books, "Books fetched successfully")
 
 @router.get("/{book_id}", response_model=List[BookResponse], status_code=status.HTTP_200_OK, description="Получение книги по id")
 async def get_book(book_id: int, session: AsyncSession = Depends(get_session)):
 	book_repo = BookRepository(session)
 	book_service = BookService(book_repo)
-	book = await book_service.get_by_id_book(book_id)
+	book = await book_service.get_by_id(book_id)
 	book_data = BookResponse.model_validate(book).model_dump()
 	return success_response(book_data, "The data was successfully found")
 
@@ -32,7 +32,7 @@ async def get_book(book_id: int, session: AsyncSession = Depends(get_session)):
 async def create_book(book_create: BookCreate, session: AsyncSession = Depends(get_session)):
 	book_repo = BookRepository(session)
 	book_service = BookService(book_repo)
-	created_book = await book_service.create_book(book_create)
+	created_book = await book_service.create(book_create)
 	book_data = BookResponse.model_validate(created_book).model_dump()
 	return success_response(book_data, "The data has been successfully created")
 
@@ -40,7 +40,7 @@ async def create_book(book_create: BookCreate, session: AsyncSession = Depends(g
 async def update_book(book_id: int, book_update: BookUpdate, session: AsyncSession = Depends(get_session)):
 	book_repo = BookRepository(session)
 	book_service = BookService(book_repo)
-	updated_book = await book_service.update_book(book_id, book_update)
+	updated_book = await book_service.update(book_id, book_update)
 	book_data = BookResponse.model_validate(updated_book).model_dump()
 	return success_response(book_data, "The data has been successfully updated")
 
@@ -48,5 +48,5 @@ async def update_book(book_id: int, book_update: BookUpdate, session: AsyncSessi
 async def delete_book(book_id: int, session: AsyncSession = Depends(get_session)):
 	book_repo = BookRepository(session)
 	book_service = BookService(book_repo)
-	await book_service.delete_book(book_id)
+	await book_service.delete(book_id)
 	return success_response({}, "The data has been successfully deleted")

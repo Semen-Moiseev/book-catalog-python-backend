@@ -17,24 +17,19 @@ class AbstractRepository(ABC, Generic[TModel, TCreate, TUpdate, TResponse]):
 		self.session = session
 
 	@abstractmethod
-	async def get_all(self, page: int, per_page: int):
-		raise NotImplementedError
+	async def get_all(self, page: int, per_page: int): ...
 
 	@abstractmethod
-	async def find_by_id(self, item_id: int):
-		raise NotImplementedError
+	async def find_by_id(self, item_id: int): ...
 
 	@abstractmethod
-	async def create(self, data: TCreate):
-		raise NotImplementedError
+	async def create(self, data: TCreate): ...
 
 	@abstractmethod
-	async def update(self, obj: TModel, update_data: TUpdate):
-		raise NotImplementedError
+	async def update(self, obj: TModel, update_data: TUpdate): ...
 
 	@abstractmethod
-	async def delete(self, obj: TModel):
-		raise NotImplementedError
+	async def delete(self, obj: TModel): ...
 
 
 class SQLAlchemyRepository(AbstractRepository[TModel, TCreate, TUpdate, TResponse]):
