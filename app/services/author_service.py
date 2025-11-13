@@ -1,5 +1,4 @@
 from app.services.service import BaseService
-from app.repositories.repository import AbstractRepository
 from app.schemas.author import AuthorUpdate
 from fastapi import HTTPException
 

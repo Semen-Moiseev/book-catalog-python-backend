@@ -1,4 +1,3 @@
-from app.repositories.repository import AbstractRepository
 from app.schemas.genre import GenreCreate, GenreUpdate
 from fastapi import HTTPException
 from app.services.service import BaseService

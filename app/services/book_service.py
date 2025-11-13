@@ -9,6 +9,7 @@ class BookService(BaseService):
 		super().__init__(book_repo)
 		self.genre_repo = genre_repo
 
+
 	async def create(self, data: BookCreate):
 		# Проверка уникальности ...
 
@@ -17,7 +18,7 @@ class BookService(BaseService):
 			genres = await self.genre_repo.get_by_ids(data.genres)
 
 			if not genres:
-				raise HTTPException(status_code=400, detail="Invalid genre IDs")
+				raise HTTPException(status_code=400, detail="Invalid genres")
 
 		book = await self.repository.create({
 			"title": data.title,

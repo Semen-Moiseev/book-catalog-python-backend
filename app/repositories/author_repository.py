@@ -1,11 +1,11 @@
 from app.repositories.repository import SQLAlchemyRepository
 from app.models.author import Author
-from app.schemas.author import AuthorCreate, AuthorUpdate, AuthorResponse
+from app.schemas.author import AuthorCreate, AuthorUpdate
 from sqlalchemy import select
 
-class AuthorRepository(SQLAlchemyRepository[Author, AuthorCreate, AuthorUpdate, AuthorResponse]):
+class AuthorRepository(SQLAlchemyRepository[Author, AuthorCreate, AuthorUpdate]):
 	model = Author
-	response_schema = AuthorResponse
+
 
 	async def check_unique_author_name_for_update(self, name: str, author_id: int = None):
 		query = select(Author).where(Author.name == name, Author.id != author_id)
