@@ -1,4 +1,4 @@
-from app.repositories.repository import SQLAlchemyRepository
+from app.repositories.base_repository import SQLAlchemyRepository
 from app.models.book import Book
 from app.schemas.book import BookCreate, BookUpdate
 from app.models.genre import Genre
@@ -8,7 +8,7 @@ from sqlalchemy.orm import selectinload
 class BookRepository(SQLAlchemyRepository[Book, BookCreate, BookUpdate]):
 	model = Book
 
-	async def get_all(self, page: int, per_page: int):
+	async def list_all(self, page: int, per_page: int):
 		total_result = await self.session.execute(select(func.count()).select_from(Book))
 		total = total_result.scalar() or 0
 
@@ -29,8 +29,8 @@ class BookRepository(SQLAlchemyRepository[Book, BookCreate, BookUpdate]):
 			"items": items,
 		}
 
-	async def find_by_id(self, item_id: int):
-		stmt = select(Book).options(selectinload(Book.genres)).where(Book.id == item_id)
+	async def get_by_id(self, id: int):
+		stmt = select(Book).options(selectinload(Book.genres)).where(Book.id == id)
 		res = await self.session.execute(stmt)
 		return res.scalar_one_or_none()
 
@@ -54,28 +54,28 @@ class BookRepository(SQLAlchemyRepository[Book, BookCreate, BookUpdate]):
 		return book_with_genres
 
 
-	async def update(self, obj: Book, update_data: BookUpdate):
-		data = update_data.model_dump(exclude_unset=True)
+	async def update(self, instance: Book, data: BookUpdate):
+		data = data.model_dump(exclude_unset=True)
 
 		for key in ["title", "type", "author_id"]:
 			if key in data:
-				setattr(obj, key, data[key])
+				setattr(instance, key, data[key])
 
 		if "genres" in data:
 			genre_ids = data["genres"]
 			stmt = select(Genre).where(Genre.id.in_(genre_ids))
 			res = await self.session.execute(stmt)
 			genres = res.scalars().all()
-			obj.genres = genres
+			instance.genres = genres
 
-		self.session.add(obj)
+		self.session.add(instance)
 		await self.session.commit()
-		await self.session.refresh(obj)
+		await self.session.refresh(instance)
 
 		result = await self.session.execute(
 			select(Book)
 			.options(selectinload(Book.genres))
-			.where(Book.id == obj.id)
+			.where(Book.id == instance.id)
 		)
 		book_with_genres = result.scalar_one()
 

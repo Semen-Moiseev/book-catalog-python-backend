@@ -19,7 +19,7 @@ async def list_books(
 ):
 	repository = BookRepository(session)
 	service = BookService(repository)
-	books_page = await service.get_all(page, per_page)
+	books_page = await service.list_all(page, per_page)
 
 	return ApiResponse(
 		code=200,

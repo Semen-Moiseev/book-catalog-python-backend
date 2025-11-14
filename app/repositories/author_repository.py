@@ -1,4 +1,4 @@
-from app.repositories.repository import SQLAlchemyRepository
+from app.repositories.base_repository import SQLAlchemyRepository
 from app.models.author import Author
 from app.schemas.author import AuthorCreate, AuthorUpdate
 from sqlalchemy import select
@@ -7,7 +7,10 @@ class AuthorRepository(SQLAlchemyRepository[Author, AuthorCreate, AuthorUpdate])
 	model = Author
 
 
-	async def check_unique_author_name_for_update(self, name: str, author_id: int = None):
-		query = select(Author).where(Author.name == name, Author.id != author_id)
-		result = await self.session.execute(query)
+	async def check_unique_name(self, name: str, id: int | None = None):
+		if id:
+			stmt = select(Author).where(Author.name == name, Author.id != id)
+		else:
+			stmt = select(Author).where(Author.name == name)
+		result = await self.session.execute(stmt)
 		return result.scalar_one_or_none() is None

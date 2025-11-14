@@ -4,7 +4,7 @@ from app.enums.book_type import BookType
 from app.schemas.genre import GenreResponse
 
 class BookCreate(BaseModel):
-	title: str = Field(..., min_length=1, max_length=255) #description="Название книги"
+	title: str = Field(..., min_length=1, max_length=255)
 	type: BookType = Field(...)
 	author_id: int = Field(...)
 	genres: List[int] = []

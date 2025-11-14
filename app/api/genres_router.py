@@ -18,7 +18,7 @@ async def list_genres(
 ):
 	repository = GenreRepository(session)
 	service = GenreService(repository)
-	genres_page = await service.get_all(page, per_page)
+	genres_page = await service.list_all(page, per_page)
 
 	return ApiResponse(
 		code=200,

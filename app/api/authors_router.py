@@ -18,7 +18,7 @@ async def list_authors(
 ):
 	repository = AuthorRepository(session)
 	service = AuthorService(repository)
-	authors_page = await service.get_all(page, per_page)
+	authors_page = await service.list_all(page, per_page)
 
 	return ApiResponse(
 		code=200,

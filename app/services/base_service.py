@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from app.repositories.repository import AbstractRepository
+from app.repositories.base_repository import AbstractRepository
 from fastapi import HTTPException
 
 class AbstractService(ABC):
 	@abstractmethod
-	async def get_all(self, page: int, per_page: int): ...
+	async def list_all(self, page: int, per_page: int): ...
 
 	@abstractmethod
 	async def get_by_id(self, genre_id: int): ...
@@ -18,19 +18,19 @@ class BaseService(AbstractService):
 		self.repository = repository
 
 
-	async def get_all(self, page: int, per_page: int):
-		return await self.repository.get_all(page, per_page)
+	async def list_all(self, page: int, per_page: int):
+		return await self.repository.list_all(page, per_page)
 
 
-	async def get_by_id(self, genre_id: int):
-		obj = await self.repository.find_by_id(genre_id)
-		if not obj:
+	async def get_by_id(self, id: int):
+		entity = await self.repository.get_by_id(id)
+		if not entity:
 			raise HTTPException(status_code=404, detail="Item not found")
-		return obj
+		return entity
 
 
-	async def delete(self, item_id: int):
-		obj = await self.repository.find_by_id(item_id)
-		if not obj:
+	async def delete(self, id: int):
+		entity = await self.repository.get_by_id(id)
+		if not entity:
 			raise HTTPException(status_code=404, detail="Item not found")
-		return await self.repository.delete(obj)
+		return await self.repository.delete(entity)
