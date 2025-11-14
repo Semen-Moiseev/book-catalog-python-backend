@@ -80,3 +80,9 @@ class BookRepository(SQLAlchemyRepository[Book, BookCreate, BookUpdate]):
 		book_with_genres = result.scalar_one()
 
 		return book_with_genres
+
+
+	async def check_unique_name(self, title: str, author_id: int):
+		stmt = select(Genre).where(Book.title == title, Book.author_id == author_id)
+		result = await self.session.execute(stmt)
+		return result.scalars().first() is None

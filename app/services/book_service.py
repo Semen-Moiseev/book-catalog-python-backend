@@ -11,7 +11,8 @@ class BookService(BaseService):
 
 
 	async def create(self, data: BookCreate):
-		# Проверка уникальности ...
+		if not await self.repository.check_unique_name(data.title, data.author_id):
+			raise HTTPException(status_code=400, detail=f"Book with title '{data.title}' already exists.")
 
 		genres = []
 		if data.genres:
@@ -22,8 +23,9 @@ class BookService(BaseService):
 		return await self.repository.create(data.model_dump(exclude={"genres"}), genres=genres)
 
 
-	async def update(self, book_id: int, update_data: BookUpdate):
-		book = await self.get_by_id(book_id)
-		# Проверка уникальности ...
+	async def update(self, id: int, data: BookUpdate):
+		book = await self.get_by_id(id)
+		if not await self.repository.check_unique_name(data.title, data.author_id):
+			raise HTTPException(status_code=400, detail=f"Book with title '{data.title}' already exists.")
 
-		return await self.repository.update(book, update_data)
+		return await self.repository.update(book, data)
