@@ -30,7 +30,5 @@ class BaseService(AbstractService):
 
 
 	async def delete(self, id: int):
-		entity = await self.repository.get_by_id(id)
-		if not entity:
-			raise HTTPException(status_code=404, detail="Item not found")
+		entity = await self.get_by_id(id)
 		return await self.repository.delete(entity)

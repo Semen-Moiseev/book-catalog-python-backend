@@ -22,7 +22,7 @@ async def list_authors(
 
 	return ApiResponse(
 		code=200,
-		message="Authors fetched successfully",
+		message="The authors were successfully found",
 		data=authors_page
 	)
 
@@ -35,7 +35,7 @@ async def get_author(author_id: int, session: AsyncSession = Depends(get_session
 
 	return ApiResponse(
 		code=200,
-		message="The data was successfully found",
+		message="The author was successfully found",
 		data=author
 	)
 
@@ -48,7 +48,7 @@ async def update_author(author_id: int, author_update: AuthorUpdate, session: As
 
 	return ApiResponse(
 		code=200,
-		message="The data has been successfully updated",
+		message="The author has been successfully updated",
 		data=updated
 	)
 
@@ -61,6 +61,6 @@ async def delete_author(author_id: int, session: AsyncSession = Depends(get_sess
 
 	return ApiResponse(
 		code=200,
-		message="The data has been successfully deleted",
+		message="The author has been successfully deleted",
 		data={}
 	)

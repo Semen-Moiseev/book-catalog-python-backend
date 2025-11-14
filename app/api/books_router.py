@@ -23,7 +23,7 @@ async def list_books(
 
 	return ApiResponse(
 		code=200,
-		message="Books fetched successfully",
+		message="The books were successfully found",
 		data=books_page
 	)
 
@@ -36,7 +36,7 @@ async def get_book(book_id: int, session: AsyncSession = Depends(get_session)):
 
 	return ApiResponse(
 		code=200,
-		message="The data was successfully found",
+		message="The book was successfully found",
 		data=book
 	)
 
@@ -50,7 +50,7 @@ async def create_book(book_create: BookCreate, session: AsyncSession = Depends(g
 
 	return ApiResponse(
 		code=200,
-		message="The data has been successfully created",
+		message="The book was successfully created",
 		data=created
 	)
 
@@ -63,7 +63,7 @@ async def update_book(book_id: int, book_update: BookUpdate, session: AsyncSessi
 
 	return ApiResponse(
 		code=200,
-		message="The data has been successfully updated",
+		message="The book has been successfully updated",
 		data=updated
 	)
 
@@ -76,6 +76,6 @@ async def delete_book(book_id: int, session: AsyncSession = Depends(get_session)
 
 	return ApiResponse(
 		code=200,
-		message="The data has been successfully deleted",
+		message="The book has been successfully deleted",
 		data={}
 	)
