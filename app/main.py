@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.core.database import init_db
-from app.api.author_router import router as author_router
-from app.api.genre_router import router as genre_router
-from app.api.book_router import router as book_router
+from app.api.authors_router import router as author_router
+from app.api.genres_router import router as genre_router
+from app.api.books_router import router as book_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

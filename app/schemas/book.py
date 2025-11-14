@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from app.enums.book_type import BookType
+from app.schemas.genre import GenreResponse
 
 class BookCreate(BaseModel):
 	title: str = Field(..., min_length=1, max_length=255) #description="Название книги"
@@ -21,7 +22,18 @@ class BookResponse(BaseModel):
 	title: str
 	type: BookType
 	author_id: int
-	genres: List[int]
+	genres: List[GenreResponse]
+
+	model_config = {
+		"from_attributes": True
+	}
+
+class BookListResponse(BaseModel):
+	page: int
+	per_page: int
+	total: int
+	total_pages: int
+	items: List[BookResponse]
 
 	model_config = {
 		"from_attributes": True

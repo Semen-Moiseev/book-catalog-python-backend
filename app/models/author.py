@@ -7,7 +7,7 @@ class Author(Base):
 
 	id = Column(Integer, primary_key=True)
 	name = Column(String(255), nullable=False)
-	user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True, index=True)
+	user_id = Column(Integer, nullable=False, unique=True, index=True) # ForeignKey("users.id", ondelete="CASCADE"),
 
 	books = relationship("Book", back_populates="author", cascade="all, delete-orphan")
 

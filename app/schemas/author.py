@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
 class AuthorCreate(BaseModel):
 	name: str = Field(..., min_length=2, max_length=255)
@@ -15,6 +15,17 @@ class AuthorResponse(BaseModel):
 	id: int
 	name: str
 	user_id: int
+
+	model_config = {
+		"from_attributes": True
+	}
+
+class AuthorListResponse(BaseModel):
+	page: int
+	per_page: int
+	total: int
+	total_pages: int
+	items: List[AuthorResponse]
 
 	model_config = {
 		"from_attributes": True

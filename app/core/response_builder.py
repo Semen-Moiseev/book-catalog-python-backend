@@ -19,3 +19,5 @@ def error_response(status_code=400, message=""):
 			"data": {}},
 		status_code=status_code
 	)
+
+# УДАЛИТЬ ЭТОТ ФАЙЛ ДЕЛАТЬ ВАЛИДАЦИЮ ЧЕРЕЗ PYDENTIC МОДЕЛИ
