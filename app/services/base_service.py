@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from app.repositories.base_repository import AbstractRepository
-from fastapi import HTTPException
+from app.core.exceptions import AppException
 
 class AbstractService(ABC):
 	@abstractmethod
@@ -25,7 +25,7 @@ class BaseService(AbstractService):
 	async def get_by_id(self, id: int):
 		entity = await self.repository.get_by_id(id)
 		if not entity:
-			raise HTTPException(status_code=404, detail="Item not found")
+			raise AppException(404, "Item not found")
 		return entity
 
 
