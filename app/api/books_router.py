@@ -16,7 +16,7 @@ async def list_books(
 	page: int = Query(1, ge=1, description="Номер страницы"),
 	per_page: int = Query(5, ge=1, le=100, description="Количество элементов на странице"),
 	session: AsyncSession = Depends(get_session)
-):
+) -> ApiResponse:
 	repository = BookRepository(session)
 	service = BookService(repository)
 	books_page = await service.list_all(page, per_page)
@@ -30,7 +30,7 @@ async def list_books(
 
 
 @router.get("/{book_id}", response_model=ApiResponse[BookResponse], description="Получение книги по id")
-async def get_book(book_id: int, session: AsyncSession = Depends(get_session)):
+async def get_book(book_id: int, session: AsyncSession = Depends(get_session)) -> ApiResponse:
 	repository = BookRepository(session)
 	service = BookService(repository)
 	book = await service.get_by_id(book_id)
@@ -44,7 +44,7 @@ async def get_book(book_id: int, session: AsyncSession = Depends(get_session)):
 
 
 @router.post("/", response_model=ApiResponse[BookResponse], description="Создание новой книги")
-async def create_book(book_create: BookCreate, session: AsyncSession = Depends(get_session)):
+async def create_book(book_create: BookCreate, session: AsyncSession = Depends(get_session)) -> ApiResponse:
 	book_repo = BookRepository(session)
 	genre_repo = GenreRepository(session)
 	service = BookService(book_repo, genre_repo)
@@ -59,7 +59,7 @@ async def create_book(book_create: BookCreate, session: AsyncSession = Depends(g
 
 
 @router.put("/{book_id}", response_model=ApiResponse[BookResponse], description="Обновление книги по id")
-async def update_book(book_id: int, book_update: BookUpdate, session: AsyncSession = Depends(get_session)):
+async def update_book(book_id: int, book_update: BookUpdate, session: AsyncSession = Depends(get_session)) -> ApiResponse:
 	repository = BookRepository(session)
 	service = BookService(repository)
 	updated = await service.update(book_id, book_update)
@@ -73,7 +73,7 @@ async def update_book(book_id: int, book_update: BookUpdate, session: AsyncSessi
 
 
 @router.delete("/{book_id}", response_model=ApiResponse[dict], description="Удаление книги по id")
-async def delete_book(book_id: int, session: AsyncSession = Depends(get_session)):
+async def delete_book(book_id: int, session: AsyncSession = Depends(get_session)) -> ApiResponse:
 	repository = BookRepository(session)
 	service = BookService(repository)
 	await service.delete(book_id)

@@ -7,7 +7,7 @@ class GenreRepository(SQLAlchemyRepository[Genre, GenreCreate, GenreUpdate]):
 	model = Genre
 
 
-	async def check_unique_name(self, name: str, id: int | None = None):
+	async def check_unique_name(self, name: str, id: int | None = None) -> bool:
 		if id:
 			stmt = select(Genre).where(Genre.name == name, Genre.id != id)
 		else:
@@ -16,7 +16,7 @@ class GenreRepository(SQLAlchemyRepository[Genre, GenreCreate, GenreUpdate]):
 		return result.scalar_one_or_none() is None
 
 
-	async def get_by_ids(self, genres: list[int]):
+	async def get_by_ids(self, genres: list[int]) -> list[Genre]:
 		stmt = select(Genre).where(Genre.id.in_(genres))
 		result = await self.session.execute(stmt)
 		return result.scalars().all()

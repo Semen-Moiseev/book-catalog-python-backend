@@ -8,6 +8,7 @@ from sqlalchemy.orm import selectinload
 class BookRepository(SQLAlchemyRepository[Book, BookCreate, BookUpdate]):
 	model = Book
 
+
 	async def list_all(self, page: int, per_page: int):
 		total_result = await self.session.execute(select(func.count()).select_from(Book))
 		total = total_result.scalar() or 0
@@ -29,7 +30,8 @@ class BookRepository(SQLAlchemyRepository[Book, BookCreate, BookUpdate]):
 			"items": items,
 		}
 
-	async def get_by_id(self, id: int):
+
+	async def get_by_id(self, id: int) -> Book | None:
 		stmt = select(Book).options(selectinload(Book.genres)).where(Book.id == id)
 		res = await self.session.execute(stmt)
 		return res.scalar_one_or_none()
@@ -54,7 +56,7 @@ class BookRepository(SQLAlchemyRepository[Book, BookCreate, BookUpdate]):
 		return book_with_genres
 
 
-	async def update(self, instance: Book, data: BookUpdate):
+	async def update(self, instance: Book, data: BookUpdate) -> Book:
 		data = data.model_dump(exclude_unset=True)
 
 		for key in ["title", "type", "author_id"]:
@@ -82,7 +84,7 @@ class BookRepository(SQLAlchemyRepository[Book, BookCreate, BookUpdate]):
 		return book_with_genres
 
 
-	async def check_unique_name(self, title: str, author_id: int):
+	async def check_unique_name(self, title: str, author_id: int) -> bool:
 		stmt = select(Genre).where(Book.title == title, Book.author_id == author_id)
 		result = await self.session.execute(stmt)
 		return result.scalars().first() is None
