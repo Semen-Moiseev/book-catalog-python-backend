@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from sqlalchemy import select, func, insert
+from sqlalchemy import select, func
 from typing import Generic, TypeVar, Type
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -54,13 +54,11 @@ class SQLAlchemyRepository(AbstractRepository[ModelType, CreateSchemaType, Updat
 
 
 	async def create(self, data: CreateSchemaType):
-		stmt = insert(self.model).values(**data)
-		res = await self.session.execute(stmt)
+		obj = self.model(**data)
+		self.session.add(obj)
 		await self.session.commit()
-
-		stmt = select(self.model).where(self.model.id == res.lastrowid)
-		res = await self.session.execute(stmt)
-		return res.scalar_one()
+		await self.session.refresh(obj)
+		return obj
 
 
 	async def update(self, instance: ModelType, data: UpdateSchemaType):
