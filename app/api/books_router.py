@@ -22,6 +22,7 @@ async def list_books(
 	books_page = await service.list_all(page, per_page)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The books were successfully found",
 		data=books_page
@@ -35,6 +36,7 @@ async def get_book(book_id: int, session: AsyncSession = Depends(get_session)):
 	book = await service.get_by_id(book_id)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The book was successfully found",
 		data=book
@@ -49,6 +51,7 @@ async def create_book(book_create: BookCreate, session: AsyncSession = Depends(g
 	created = await service.create(book_create)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The book was successfully created",
 		data=created
@@ -62,6 +65,7 @@ async def update_book(book_id: int, book_update: BookUpdate, session: AsyncSessi
 	updated = await service.update(book_id, book_update)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The book has been successfully updated",
 		data=updated
@@ -75,6 +79,7 @@ async def delete_book(book_id: int, session: AsyncSession = Depends(get_session)
 	await service.delete(book_id)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The book has been successfully deleted",
 		data={}

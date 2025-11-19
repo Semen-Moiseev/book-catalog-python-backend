@@ -21,6 +21,7 @@ async def list_authors(
 	authors_page = await service.list_all(page, per_page)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The authors were successfully found",
 		data=authors_page
@@ -34,6 +35,7 @@ async def get_author(author_id: int, session: AsyncSession = Depends(get_session
 	author = await service.get_by_id(author_id)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The author was successfully found",
 		data=author
@@ -47,6 +49,7 @@ async def update_author(author_id: int, author_update: AuthorUpdate, session: As
 	updated = await service.update(author_id, author_update)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The author has been successfully updated",
 		data=updated
@@ -60,6 +63,7 @@ async def delete_author(author_id: int, session: AsyncSession = Depends(get_sess
 	await service.delete(author_id)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The author has been successfully deleted",
 		data={}

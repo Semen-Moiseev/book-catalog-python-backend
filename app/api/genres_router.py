@@ -21,6 +21,7 @@ async def list_genres(
 	genres_page = await service.list_all(page, per_page)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The genres were successfully found",
 		data=genres_page
@@ -34,6 +35,7 @@ async def get_genre(genre_id: int, session: AsyncSession = Depends(get_session))
 	genre = await service.get_by_id(genre_id)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The genre was successfully found",
 		data=genre
@@ -47,6 +49,7 @@ async def create_genre(genre_create: GenreCreate, session: AsyncSession = Depend
 	created = await service.create(genre_create)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The genre was successfully created",
 		data=created
@@ -60,6 +63,7 @@ async def update_genre(genre_id: int, genre_update: GenreUpdate, session: AsyncS
 	updated = await service.update(genre_id, genre_update)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The genre has been successfully updated",
 		data=updated
@@ -73,6 +77,7 @@ async def delete_genre(genre_id: int, session: AsyncSession = Depends(get_sessio
 	await service.delete(genre_id)
 
 	return ApiResponse(
+		success=True,
 		code=200,
 		message="The genre has been successfully deleted",
 		data={}

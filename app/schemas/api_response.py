@@ -5,15 +5,11 @@ from typing import Optional
 T = TypeVar("T")
 
 class ApiResponse(BaseModel, Generic[T]):
-	success: bool = True
+	success: bool
 	code: int
 	message: str
-	data: Optional[T] = None
+	data: Optional[T] = {}
 
 	model_config = {
 		"from_attributes": True
 	}
-
-class ApiErrorResponse(ApiResponse[None]):
-	success: bool = False
-	data: None = None
